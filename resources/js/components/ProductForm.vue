@@ -96,7 +96,7 @@
         <div v-if="step === 3">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Step 2</h3>
+                    <h3 class="card-title">Step 3</h3>
                 </div>
 
                 <div class="card-body">
