@@ -15,7 +15,7 @@ class ProductTableSeeder extends Seeder
     public function run(): void
     {
         $product_name = array('', 'Apple', 'Banana', 'Orange', 'Red Tshirt', 'Blue Tshirt', 'Maong Pants', 'Jogging Pants', 'Barbie Doll', 'Pokemon Plushie');
-        $categories = array('Food', 'Clothes', 'Toys');
+        $categories = array('Foods', 'Clothes', 'Toys');
         $decsriptions = array("Lorem ipsum dolor sit amet", "consectetur adipiscing elit", "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua");
         $imageReference = array('images/default.png');
         $currentDate = now();
