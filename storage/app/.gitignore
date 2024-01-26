@@ -1,3 +1,5 @@
-*
-!public/
-!.gitignore
+/storage/*
+!/storage/.gitignore
+!/storage/public/
+!/storage/public/images/
+!/storage/public/videos/
