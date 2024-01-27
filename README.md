@@ -3,9 +3,10 @@ Install Node.js, php, and composer
 
 ## Installation Guide
 1. Download the ZIP file and extract it or clone the repository 
-2. Open the command prompt call the directory to the location by:
-    cd path\to\the\repo
-
+2. Open the command prompt and call the directory to the location by:
+```
+cd path\to\the\repo
+```    
 3. Install the dependencies by running the commands:
 ```
 npm install
@@ -42,7 +43,7 @@ Note: if you have the wrong database credentials, you might need to revisit step
 ```
 php artisan db:seed
 ```
-11. Finally, to access the videos and images run:
+11. Finally, to access the videos and images, run:
 ```
 php artisan storage:link
 ```
@@ -57,9 +58,11 @@ php artisan serve
 14. Access the site at http://localhost:8000/
 
 ## Login credentials for the website:
-Username: rey (or you can use the email: rey@gmail.com)__
+Username: rey (or you can use the email: rey@gmail.com)
+
 password: abc
 
-Username: admin (or you can use the email: admin@gmail.com)__
+Username: admin (or you can use the email: admin@gmail.com)
+
 password: abc
  
