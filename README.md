@@ -1,5 +1,5 @@
 ## Prerequisites  
-Install Node.js, php, and composer
+Node.js, php, and composer
 
 ## Installation Guide
 1. Download the ZIP file and extract it or clone the repository 
@@ -16,7 +16,7 @@ npm install
 composer install
 ```
 5. Open the folder and make a copy of the **.env.example** in the same location
-6. Open the copy of the .env.example file, edit it using Notepad or other text editing software, and enter the correct database configuration:
+6. Open the copy of the **.env.example** file, edit it using Notepad or other text editing software, and enter the correct database configuration:
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
