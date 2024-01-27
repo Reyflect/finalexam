@@ -57,9 +57,9 @@ php artisan serve
 14. Access the site at http://localhost:8000/
 
 ## Login credentials for the website:
-Username: rey (or you can use the email: rey@gmail.com)
+Username: rey (or you can use the email: rey@gmail.com)__
 password: abc
 
-Username: admin (or you can use the email: admin@gmail.com)
+Username: admin (or you can use the email: admin@gmail.com)__
 password: abc
  
