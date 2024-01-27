@@ -40,7 +40,9 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="m-0">{{ product.name }}</h5>
+                                    <h5 class="m-0">
+                                        Product Name: {{ product.name }}
+                                    </h5>
                                 </div>
                                 <div class="card-body">
                                     <div
@@ -61,12 +63,12 @@
                                     </div>
 
                                     <h6 class="card-title">
-                                        {{ product.category }}
+                                        Category: {{ product.category }}
                                     </h6>
                                     <p class="card-text">
-                                        {{ product.description }}
+                                        Description: {{ product.description }}
                                         <br />
-                                        Date added:
+                                        Date added/updated:
                                         {{ formatDateTime(product.datetime) }}
                                     </p>
                                     <a

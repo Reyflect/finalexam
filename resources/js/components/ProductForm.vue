@@ -230,7 +230,7 @@ export default {
             if (this.isEditing && this.validImage) {
                 return true;
             }
-            return this.formData.images.length > 0;
+            return this.formData.images.length > 0 && this.validImage;
         },
         validateDatetime() {
             return this.formData.datetime !== "";
