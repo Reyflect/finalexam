@@ -39,6 +39,7 @@ it will ask you to create a database and type:
 yes 
 ```
 Note: if you have the wrong database credentials, you might need to revisit step #6 and ensure all database configurations are correct
+
 10. Seed the database by running:
 ```
 php artisan db:seed
