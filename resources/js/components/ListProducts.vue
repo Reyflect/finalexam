@@ -150,7 +150,9 @@ const getProducts = () => {
         products.value = response.data;
     });
 };
-
+const paginate = (page) => {
+    currentPage.value = page;
+};
 const fetchProducts = async () => {
     try {
         const response = await axios.get("/api/products/search", {
