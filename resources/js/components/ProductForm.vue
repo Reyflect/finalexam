@@ -78,16 +78,16 @@
                             v-on:change="handleFileChange"
                         />
                         <span v-show="!validateImages()" class="text-danger"
-                            >Please select at least one image. Accepted types
-                            are .jpg, .jpeg, .png
-                        </span>
-                        <span>
+                            >Please select at least one image. File size should
+                            be less than 2 MB. Accepted image types are .jpg,
+                            .jpeg, .png
+                            <br />
                             {{
                                 isEditing
                                     ? "Editing this will replace the existing image"
                                     : ""
-                            }}</span
-                        >
+                            }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -309,6 +309,7 @@ export default {
                     })
                     .catch((error) => {
                         console.error("Error submitting form:", error);
+                        window.location.href = "/error";
                     });
             }
         },

@@ -22,7 +22,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
+            return response()->json(['errors' => "/error"], 400);
         }
 
         // Create a new product and save it to the database

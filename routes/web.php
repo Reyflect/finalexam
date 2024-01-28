@@ -59,3 +59,9 @@ Route::get(
         return redirect('/dashboard');
     }
 );
+Route::get(
+    '/error',
+    function () {
+        return view('/dashboard');
+    }
+);

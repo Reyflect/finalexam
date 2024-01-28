@@ -150,7 +150,15 @@ use Illuminate\Support\Str;
         <my-video :initial-video="'{{$video}}'"></my-video>
 
     </div>
-
+    @elseif(Request::is('error'))
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">An error has occured</h5>
+            <p class="card-text">
+                Please read the instructions of the form carefully.
+            </p>
+        </div>
+    </div>
     </div>
     
     
