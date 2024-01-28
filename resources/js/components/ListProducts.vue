@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="products.length === 0" class="card">
+            <div v-if="products.length === 0 && isSearching" class="card">
                 <div class="card-body">
                     <h5 class="card-title">No items found</h5>
                     <p class="card-text">
@@ -50,76 +50,71 @@
                     </p>
                 </div>
             </div>
-            <div v-else>
-                <div class="card-body table-responsive">
-                    <div v-for="product in paginatedProducts" :key="product.id">
-                        <div class="row">
-                            <!-- Product Information -->
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="m-0">
-                                            #{{ product.id }} Product Name:
-                                            {{ product.name }}
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div
-                                            v-for="(image, index) in JSON.parse(
-                                                product.images
-                                            )"
-                                            :key="index"
-                                        >
-                                            <img
-                                                :src="
-                                                    baseImageDirectory + image
-                                                "
-                                                alt="Product Image"
-                                                class="img-fluid mb-2"
-                                                :style="{
-                                                    width: '100px',
-                                                    height: '100px',
-                                                }"
-                                            />
-                                        </div>
 
-                                        <h6 class="card-title">
-                                            Category: {{ product.category }}
-                                        </h6>
-                                        <p class="card-text">
-                                            Description:
-                                            {{ product.description }}
-                                            <br />
-                                            Date added/updated:
-                                            {{
-                                                formatDateTime(product.datetime)
-                                            }}
-                                        </p>
-                                        <a
-                                            class="btn btn-primary"
-                                            v-if="product.id"
-                                            :href="'/editproduct/' + product.id"
-                                            >EDIT</a
-                                        >
-                                        <button
-                                            @click="deleteProduct(product.id)"
-                                            class="btn btn-danger"
-                                        >
-                                            Delete
-                                        </button>
+            <div class="card-body table-responsive">
+                <div v-for="product in paginatedProducts" :key="product.id">
+                    <div class="row">
+                        <!-- Product Information -->
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="m-0">
+                                        #{{ product.id }} Product Name:
+                                        {{ product.name }}
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div
+                                        v-for="(image, index) in JSON.parse(
+                                            product.images
+                                        )"
+                                        :key="index"
+                                    >
+                                        <img
+                                            :src="baseImageDirectory + image"
+                                            alt="Product Image"
+                                            class="img-fluid mb-2"
+                                            :style="{
+                                                width: '100px',
+                                                height: '100px',
+                                            }"
+                                        />
                                     </div>
+
+                                    <h6 class="card-title">
+                                        Category: {{ product.category }}
+                                    </h6>
+                                    <p class="card-text">
+                                        Description:
+                                        {{ product.description }}
+                                        <br />
+                                        Date added/updated:
+                                        {{ formatDateTime(product.datetime) }}
+                                    </p>
+                                    <a
+                                        class="btn btn-primary"
+                                        v-if="product.id"
+                                        :href="'/editproduct/' + product.id"
+                                        >EDIT</a
+                                    >
+                                    <button
+                                        @click="deleteProduct(product.id)"
+                                        class="btn btn-danger"
+                                    >
+                                        Delete
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <Pagination
-                        :total-items="products.length"
-                        v-if="products.length > 0"
-                        :per-page="itemsPerPage"
-                        :initial-page="currentPage"
-                        @page-change="paginate"
-                    />
                 </div>
+                <Pagination
+                    :total-items="products.length"
+                    v-if="products.length > 0"
+                    :per-page="itemsPerPage"
+                    :initial-page="currentPage"
+                    @page-change="paginate"
+                />
             </div>
         </div>
     </div>
@@ -134,6 +129,7 @@ const products = ref([]);
 const searchTerm = ref("");
 const currentPage = ref(1);
 const itemsPerPage = 5;
+const isSearching = ref(false);
 const baseImageDirectory = "http://localhost:8000/storage/";
 const totalPages = computed(() => Math.ceil(products.length / itemsPerPage));
 
@@ -170,6 +166,7 @@ const fetchProducts = async () => {
 };
 const handleSubmit = () => {
     fetchProducts();
+    isSearching.value = true;
 };
 
 const paginatedProducts = computed(() => {
@@ -178,15 +175,12 @@ const paginatedProducts = computed(() => {
     return products.value.slice(startIndex, endIndex);
 });
 
-const paginate = (page) => {
-    currentPage.value = page;
-};
 onMounted(() => {
     fetchCategories();
     getProducts();
+    console.log(isSearching.value);
     currentPage.value = parseQueryParameters();
     goToPage(currentPage.value);
-    paginate(currentPage.value);
 });
 
 const selectedCategory = ref("");
@@ -224,11 +218,6 @@ const deleteProduct = (productId) => {
 const parseQueryParameters = () => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const page = urlSearchParams.get("page");
-    if (page > totalPages) {
-        console.log(page);
-    }
-    console.log(page);
-
     return page ? parseInt(page) : 1;
 };
 
