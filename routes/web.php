@@ -18,7 +18,9 @@ use App\Http\Controllers\ProductController;
 */
 
 
-Route::get('/login', [UserController::class, 'goToLoginPage']);
+Route::get('/login',  function () {
+    return view('login');
+});
 
 Route::post('/loginAuthentication', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout']);
@@ -41,6 +43,7 @@ Route::get('/getDistinctCategories', [ProductController::class, 'getDistinctCate
 Route::get(
     '/createproduct',
     function () {
+
         return view('/dashboard');
     }
 );
@@ -52,11 +55,8 @@ Route::get(
 Route::get(
     '/videos',
     function () {
-        if (Auth::check() || Auth::viaRemember()) {
-            $videoName = request('video', 'hedgehog');
-            return view('dashboard', ['video' => $videoName]);
-        }
-        return redirect('/dashboard');
+        $videoName = request('video', 'hedgehog');
+        return view('dashboard', ['video' => $videoName]);
     }
 );
 Route::get(

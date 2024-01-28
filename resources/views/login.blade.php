@@ -6,13 +6,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AdminLTE 3 | Log in</title>
- 
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 @vite(['resources/css/app.css'])
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
 </head>
 <body class="hold-transition login-page">
+    @if (Auth::check())
+    <script>window.location = "/dashboard";</script>
+    @endif
 <div class="login-box">
 <div class="login-logo">
 <b>LOGIN</b>

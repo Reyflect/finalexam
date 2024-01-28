@@ -41,7 +41,7 @@ class UserController extends Controller
         if (Auth::check() || Auth::viaRemember()) {
             return redirect('/dashboard');
         }
-        return view('login');
+        return redirect('login');
     }
     public function goToDashboardPage()
     {
@@ -57,7 +57,7 @@ class UserController extends Controller
 
         // Checks if the user needs to login again
         if (Auth::check() || Auth::viaRemember()) {
-            return view('dashboard');
+            return redirect('dashboard');
         } else {
             return redirect('/login');
         }

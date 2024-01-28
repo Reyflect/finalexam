@@ -11,12 +11,14 @@
 @php
 use Illuminate\Support\Str;
 @endphp
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
     </head>
 <body class="hold-transition sidebar-mini">
-    
-    
-    
+
+ 
 <div class="wrapper">
 
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -56,7 +58,14 @@ use Illuminate\Support\Str;
 <img src=" https://adminlte.io/themes/v3/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
 </div>
 <div class="info">
-<a href="#" class="d-block"> Welcome, {{ Auth::user()->username }}!</a>
+<a href="#" class="d-block"> Welcome,
+    @if (!Auth::check())
+    <script>window.location = "/login";</script>
+ 
+    @else
+    {{ Auth::user()->username }}!
+    @endif
+    </a>
 </div>
 </div>
 
