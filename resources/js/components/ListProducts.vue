@@ -52,17 +52,14 @@
             </div>
 
             <div class="card-body table-responsive">
-                <div
-                    v-for="(product, index) in paginatedProducts"
-                    :key="product.id"
-                >
+                <div v-for="product in paginatedProducts" :key="product.id">
                     <div class="row">
                         <!-- Product Information -->
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-header">
                                     <h5 class="m-0">
-                                        #{{ index + 1 + 5 * (currentPage - 1) }}
+                                        #{{ product.id }}
                                         Product Name:
                                         {{ product.name }}
                                     </h5>
