@@ -2,22 +2,25 @@
 Node.js, php, and composer
 
 ## Installation Guide
-1. Download the ZIP file and extract it or clone the repository 
-2. Open the command prompt and call the directory to the location by:
+1. Download the ZIP file and extract it
+2. Open the command prompt/terminal and call the directory to the location by:
 ```
 cd path\to\the\repo
+//For example, if it's in the downloads folder:
+cd downloads\be-exam-main
 ```    
 3. Install the dependencies by running the commands:
 ```
 npm install
 ```
-4. Wait for it to finish downloading, then run the next command
+4. Wait for it to finish downloading, then run the next command:
 ```
 composer install
 ```
 5. Open the folder and make a copy of the **.env.example** in the same location
-6. Open the copy of the **.env.example** file, edit it using Notepad or other text editing software, and enter the correct database configuration:
+6. Open the **copy of the .env.example** file, edit it using notepad or other text editing software, and enter the correct database configuration:
 ```
+//Sample Database configuration
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -25,7 +28,7 @@ DB_DATABASE=SampleDatabaseName
 DB_USERNAME=root
 DB_PASSWORD=SamplePassword
 ```
-6. Once all the database configurations are done, save it and rename the file to **.env**
+6. Once all the database configurations are done, save the copy of .env.example file and rename the file to **.env**
 7. Generate the key for the .env file by running:
 ```
 php artisan key:generate
@@ -44,7 +47,7 @@ Note: if you have the wrong database credentials, you might need to revisit step
 ```
 php artisan db:seed
 ```
-11. Finally, to access the videos and images, run:
+11. Finally, run the command below to make the system access the videos and images:
 ```
 php artisan storage:link
 ```
@@ -52,9 +55,8 @@ php artisan storage:link
 ```
 npm run dev
 ```
-13. open another terminal to the same directory and run the command
+13. Open another command prompt/terminal and call the same directory and run the command
 ```
-cd path\to\the\repo
 php artisan serve
 ```
 14. Access the site at http://localhost:8000/
