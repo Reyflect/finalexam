@@ -54,6 +54,7 @@ npm run dev
 ```
 13. open another terminal to the same directory and run the command
 ```
+cd path\to\the\repo
 php artisan serve
 ```
 14. Access the site at http://localhost:8000/
