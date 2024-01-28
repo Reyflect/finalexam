@@ -28,6 +28,7 @@ Route::get('/dashboard{any}', [UserController::class, 'goToDashboardPage'])->whe
 Route::get('/', [UserController::class, 'checkSession']);
 
 Route::get('/api/products', [ProductController::class, 'index']);
+Route::get('/api/products/search', [ProductController::class, 'search']);
 Route::get('/api/products/{product}', [ProductController::class, 'getProductById']);
 
 Route::post('/api/addnewproduct',  [ProductController::class, 'addNewProduct']);

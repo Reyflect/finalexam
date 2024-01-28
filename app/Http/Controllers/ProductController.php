@@ -4,13 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     public function addNewProduct(Request $request)
     {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'description' => 'required|string',
+            'datetime' => 'required|date',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+        ];
+
+        // Perform validation
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         // Create a new product and save it to the database
         $product = new Product();
         $product->name = $request->input('name');
@@ -34,8 +48,6 @@ class ProductController extends Controller
 
                 // Save the image path to the array
                 $imagePaths[] = 'images/' . $filename;
-
-                Log::info('Uploaded File:', ['filename' => $filename]);
             }
 
             // Save the array of image paths to the product
@@ -50,9 +62,29 @@ class ProductController extends Controller
     }
     public function index()
     {
-
         $products = Product::all();
         return $products;
+    }
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $category = $request->input('category');
+
+        $query = Product::query();
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%$searchTerm%")
+                    ->orWhere('description', 'like', "%$searchTerm%");
+            });
+        }
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        $filteredProducts = $query->get();
+        return response()->json($filteredProducts);
     }
 
     public function getDistinctCategories()
@@ -64,12 +96,17 @@ class ProductController extends Controller
 
     public function getProductById(Product $product)
     {
-
+        if (!$product) {
+            abort(404);
+        }
         return response()->json(['product' => $product], 200);
     }
 
     public function showEditProduct(Product $product)
     {
+        if (!$product) {
+            abort(404);
+        }
 
         return view('dashboard', ['product' => $product]);
     }
@@ -77,10 +114,24 @@ class ProductController extends Controller
     public function updateProduct(Request $request, $id)
     {
 
+        $rules = [
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'description' => 'required|string',
+            'datetime' => 'required|date',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+        ];
+
+        // Perform validation
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            abort(404);
         }
 
         // Update the product details

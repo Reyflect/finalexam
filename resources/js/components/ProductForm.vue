@@ -15,6 +15,7 @@
                             name="name"
                             placeholder="Name"
                             class="form-control"
+                            maxlength="255"
                         />
                         <span v-show="!validateName()" class="text-danger"
                             >Please enter a valid name.</span
