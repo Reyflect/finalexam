@@ -6,9 +6,12 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@inertiajs/vue3": "^1.0.15",
         "@vitejs/plugin-vue": "^5.0.3",
+        "@vue/tsconfig": "^0.5.1",
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.0.0",
+        "typescript": "^5.4.4",
         "vite": "^5.0.0"
     },
     "dependencies": {

@@ -1,9 +1,9 @@
 <?php
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProductController;
 
 
 /*
@@ -16,52 +16,75 @@ use App\Http\Controllers\ProductController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartItemController;
 
 
-Route::get('/login',  function () {
-    return view('login');
-});
-
-Route::post('/loginAuthentication', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout']);
-
-Route::get('/dashboard{any}', [UserController::class, 'goToDashboardPage'])->where('any', '.*');;
-
+Route::get('/login', [UserController::class, 'checkSession']);
+Route::get('/dashboard', [UserController::class, 'checkSession']);
 Route::get('/', [UserController::class, 'checkSession']);
+Route::post('/logout', [UserController::class, 'logout']);
+Route::post('/loginAuthentication', [UserController::class, 'login']);
+
 
 Route::get('/api/products', [ProductController::class, 'index']);
-Route::get('/api/products/search', [ProductController::class, 'search']);
-Route::get('/api/products/{product}', [ProductController::class, 'getProductById']);
-
-Route::post('/api/addnewproduct',  [ProductController::class, 'addNewProduct']);
-Route::post('/api/updateproduct/{product}', [ProductController::class, 'updateProduct']);
-
-Route::delete('/api/products/{product}', [ProductController::class, 'deleteProduct']);
-
 Route::get('/getDistinctCategories', [ProductController::class, 'getDistinctCategories']);
+Route::get('/api/products/search', [ProductController::class, 'search']);
 
-Route::get(
-    '/createproduct',
-    function () {
 
-        return view('/dashboard');
-    }
-);
+Route::get('/Cart', [CartItemController::class, 'getCartItems']);
+Route::get('/items', [CartItemController::class, 'getCartItemsJSON']);
+Route::post('/api/cart/add', [CartItemController::class, 'addToCart']);
+Route::put('/api/cart/update/{id}', [CartItemController::class, 'updateCartItem']);
+Route::delete('/api/cart/remove/{id}', [CartItemController::class, 'removeCartItem']);
+Route::get('/checkout', [CartItemController::class, 'getCartItemsCheckout']);
+
+Route::get('/createproduct', function () {
+    return Inertia::render('Dashboard', ['content' => 'addproduct']);
+});
+
+Route::get('/success', function () {
+    return Inertia::render('Dashboard', ['content' => 'success']);
+});
+Route::get('/fail', function () {
+    return Inertia::render('Dashboard', ['content' => 'fail']);
+});
+
+
+
 Route::get(
     '/editproduct/{product}',
     [ProductController::class, 'showEditProduct']
 );
 
+Route::post('/api/addnewproduct',  [ProductController::class, 'addNewProduct']);
+Route::get('/api/products/{product}', [ProductController::class, 'getProductById']);
+Route::post('/api/updateproduct/{product}', [ProductController::class, 'updateProduct']);
+
+Route::delete('/api/products/{product}', [ProductController::class, 'deleteProduct']);
+
 Route::get(
     '/videos',
     function () {
+
         $videoName = request('video', 'hedgehog');
-        return view('dashboard', ['video' => $videoName]);
+        return Inertia::render('Dashboard', ['content' => 'video', 'video' => $videoName]);
     }
 );
+
+
+/*
+Route::get('/dashboard{any}', [UserController::class, 'goToDashboardPage'])->where('any', '.*');;
+Route::get('/', [UserController::class, 'checkSession']);
+
+
+
+
+
 Route::get(
     '/error',
     function () {
         return view('/dashboard');
     }
 );
+*/

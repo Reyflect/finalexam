@@ -6,11 +6,36 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+
+use function Psy\debug;
 
 class UserController extends Controller
 {
+
+    public function show()
+    {
+        $user = 'rey';
+
+        return Inertia::render('Test', [
+            'user' => $user
+        ]);
+    }
+
+
+    public function loginPage()
+    {
+        return Inertia::render('Login');
+    }
+
+    public function dashboardPage()
+    {
+        return Inertia::render('Dashboard');
+    }
+
     public function register(Request $request)
     {
+
         // Validates fields
         $incomingFields = $request->validate([
             'name' => ['required',  Rule::unique('users', 'username')],
@@ -33,22 +58,23 @@ class UserController extends Controller
     {
 
         auth()->logout();
+
         return redirect('/login');
     }
 
     public function goToLoginPage()
     {
         if (Auth::check() || Auth::viaRemember()) {
-            return redirect('/dashboard');
+            return Inertia::render('Dashboard', ['content' => 'product']);
         }
-        return redirect('login');
+        return Inertia::render('Login');
     }
     public function goToDashboardPage()
     {
         if (!Auth::check()) {
-            return redirect('/login');
+            return Inertia::render('Login');
         }
-        return view('dashboard');
+        return Inertia::render('Dashboard', ['content' => 'product']);
     }
 
 
@@ -57,13 +83,14 @@ class UserController extends Controller
 
         // Checks if the user needs to login again
         if (Auth::check() || Auth::viaRemember()) {
-            return redirect('dashboard');
+            return Inertia::render('Dashboard', ['content' => 'product']);
         } else {
-            return redirect('/login');
+            return Inertia::render('Login');
         }
     }
     public function login(Request $request)
     {
+
 
         // Checks if login credentials are entered
         $incomingFields = $request->validate([
@@ -92,6 +119,9 @@ class UserController extends Controller
             Auth::user()->username;
         }
 
-        return redirect('/dashboard');
+        //   dd(Auth::user());
+        return redirect('dashboard');
+        //  return Inertia::render('Dashboard');
+        // return redirect('/dashboard');*/
     }
 }

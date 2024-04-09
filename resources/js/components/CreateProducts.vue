@@ -4,7 +4,7 @@
     </div>
 </template>
 
-<script>
+<script type="ts">
 import ProductForm from "./ProductForm.vue";
 
 export default {

@@ -62,6 +62,10 @@
                                         #{{ product.id }}
                                         Product Name:
                                         {{ product.name }}
+                                        (Price: P{{ product.price }})
+                                        <AddToCart
+                                            :productId="product.id"
+                                        ></AddToCart>
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -121,11 +125,22 @@
     </div>
 </template>
 
+<script>
+import AddToCart from "./AddToCart.vue";
+
+export default {
+    components: {
+        AddToCart,
+    },
+};
+</script>
+
 <script setup>
 import { ref, onMounted, computed, watchEffect } from "vue";
 import axios from "axios";
 import Pagination from "./Pagination.vue";
 
+defineProps({ product: Object });
 const products = ref([]);
 const searchTerm = ref("");
 const currentPage = ref(1);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -31,7 +32,7 @@ class ProductController extends Controller
         $product->category = $request->input('category');
         $product->description = $request->input('description');
         $product->datetime = $request->input('datetime');
-
+        $product->price = 100;
         $product->save();
 
 
@@ -64,6 +65,11 @@ class ProductController extends Controller
     {
         $products = Product::all();
         return $products;
+
+        /* dd(Inertia::render('ListProducts', [
+            'product' => $products
+        ]));*/
+        // ;
     }
     public function search(Request $request)
     {
@@ -107,8 +113,8 @@ class ProductController extends Controller
         if (!$product) {
             abort(404);
         }
-
-        return view('dashboard', ['product' => $product]);
+        return Inertia::render('Dashboard', ['content' => 'editProduct', 'product' => $product]);
+        //        return view('dashboard', ['content' => 'editProduct', 'product' => $product]);
     }
 
     public function updateProduct(Request $request, $id)

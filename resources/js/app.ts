@@ -8,19 +8,28 @@ import "video.js/dist/video.min.js";
 import "videojs-playlist/dist/videojs-playlist";
 
 
-import {createApp} from 'vue';
-import ListProduct from './components/ListProducts.vue';
-import CreateProducts from './components/CreateProducts.vue';
-import EditProducts from './components/EditProducts.vue';
-import Videos from './components/VideoList.vue';
+import { DefineComponent, createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
 
+createInertiaApp({
+  resolve: (name :string) => {
+    const pages = import.meta.glob(['./components/**.vue'], { eager: true })
 
+    return pages[`./components/${name}.vue`] as DefineComponent
+  },
+  setup({ el, App, props, plugin }) {
+    createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .mount(el)
+  },
+})
 
+/*
 const app = createApp({});
-
 app.component('my-video',Videos);
 app.component('product-list',ListProduct);
 app.component('create-product',CreateProducts);
 app.component('edit-products',EditProducts);
 
-app.mount('#app');
+app.mount('#app');*/
+

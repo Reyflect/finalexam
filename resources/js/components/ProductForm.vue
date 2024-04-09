@@ -309,7 +309,7 @@ export default {
                     })
                     .catch((error) => {
                         console.error("Error submitting form:", error);
-                        window.location.href = "/error";
+                        //     window.location.href = "/error";
                     });
             }
         },

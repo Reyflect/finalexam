@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('category');
             $table->string('description');
+            $table->double('price');
+            $table->dateTime('datetime')->nullable();
+            $table->json('images')->nullable();
             $table->timestamps(); // Created_at and updated_at columns
         });
     }

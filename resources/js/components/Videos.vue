@@ -14,7 +14,6 @@
 <script>
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
-import axios from "axios";
 
 export default {
     props: {
@@ -56,11 +55,6 @@ export default {
             console.log("Checking if video exists:", newVideo);
 
             try {
-                // Check if the video URL exists
-                await axios.head(
-                    `http://localhost:8000/storage/videos/${fullVideoUrl}.mp4`
-                );
-
                 // Video exists, update player source
                 this.player.src({
                     src: `http://localhost:8000/storage/videos/${fullVideoUrl}.mp4`,
