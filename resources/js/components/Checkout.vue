@@ -1,35 +1,52 @@
 <template>
-    <div>
-        <h2>Final Checkout</h2>
-        <ul>
-            <li v-for="item in cartItems" :key="item.id">
-                {{ item.product.name }} (P{{ item.product.price }}) - Quantity:
-                {{ item.quantity }}
+    <div class="card">
+        <div class="card-header">
+            <h2>Checkout</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+                <tr v-for="item in cartItems" :key="item.id">
+                    <td>{{ item.product.name }}</td>
+                    <td>P{{ item.product.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.product.price * item.quantity }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total Amount: P{{ total }}</td>
+                </tr>
+            </table>
 
-                Subtotal: {{ item.product.price * item.quantity }}
-            </li>
-        </ul>
-        <p>Total Amount: P{{ total }}</p>
+            <form ref="paymentForm" action="/api/maya" method="POST">
+                <input
+                    type="hidden"
+                    name="cartItems"
+                    :value="JSON.stringify(cartItems)"
+                />
+                <input type="hidden" name="total_price" :value="total" />
 
-        <form ref="paymentForm" action="/api/maya" method="POST">
-            <input
-                type="hidden"
-                name="cartItems"
-                :value="JSON.stringify(cartItems)"
-            />
-            <input type="hidden" name="total_price" :value="total" />
+                <div style="margin-top: 1%">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        @click="processPayment"
+                        v-show="!isCartEmpty"
+                    >
+                        Pay With Maya
+                    </button>
+                </div>
+            </form>
 
-            <button
-                class="btn btn-success"
-                type="submit"
-                @click="processPayment"
-                v-show="!isCartEmpty"
-            >
-                Pay With Maya
-            </button>
-        </form>
-
-        <p v-show="isCartEmpty">No items in cart!</p>
+            <p v-show="isCartEmpty">No items in cart!</p>
+        </div>
     </div>
 </template>
 

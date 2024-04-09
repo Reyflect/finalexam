@@ -19,7 +19,7 @@ import { ref } from "vue";
 import axios from "axios";
 
 export default {
-    props: ["productId"],
+    props: ["productId", "productname"],
     setup(props) {
         const quantity = ref(1); // Default quantity
         const addToCart = async () => {
@@ -29,9 +29,15 @@ export default {
                     quantity: quantity.value,
                 });
                 console.log(response.data);
-                window.alert("Item added to cart");
+                window.alert(
+                    "Added " +
+                        quantity.value +
+                        " " +
+                        props.productname +
+                        " to cart"
+                );
             } catch (error) {
-                console.error(error); // Handle error
+                console.error(error);
             }
         };
 

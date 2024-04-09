@@ -23,6 +23,21 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input
+                            v-model="formData.price"
+                            type="number"
+                            name="Price"
+                            placeholder="price"
+                            class="form-control"
+                            min="1"
+                            required
+                        />
+                        <span v-show="!validatePrice()" class="text-danger"
+                            >Please set a price.</span
+                        >
+                    </div>
+                    <div class="form-group">
                         <label for="category">Category:</label>
                         <select
                             v-model="formData.category"
@@ -173,6 +188,7 @@ export default {
                 description: this.product.description,
                 images: [],
                 datetime: this.product.datetime,
+                price: this.product.price,
             },
             categoryOptions: [],
             validImage: false,
@@ -187,6 +203,7 @@ export default {
                     description: newVal.description,
                     images: [],
                     datetime: newVal.datetime,
+                    price: newVal.price,
                 };
             },
             deep: true,
@@ -200,6 +217,7 @@ export default {
             if (this.step === 1) {
                 if (
                     this.validateName() &&
+                    this.validatePrice() &&
                     this.validateCategory() &&
                     this.validateDescription()
                 ) {
@@ -220,6 +238,9 @@ export default {
         },
         validateName() {
             return this.formData.name.trim() !== "";
+        },
+        validatePrice() {
+            return this.formData.price > 0;
         },
         validateCategory() {
             return this.formData.category !== "";
@@ -288,7 +309,7 @@ export default {
                 formData.append("category", this.formData.category);
                 formData.append("description", this.formData.description);
                 formData.append("datetime", this.formData.datetime);
-
+                formData.append("price", this.formData.price);
                 for (const image of this.formData.images) {
                     formData.append("images[]", image);
                 }

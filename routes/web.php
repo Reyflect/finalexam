@@ -1,7 +1,6 @@
 <?php
 
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -43,9 +42,7 @@ Route::get('/createproduct', function () {
     return Inertia::render('Dashboard', ['content' => 'addproduct']);
 });
 
-Route::get('/success', function () {
-    return Inertia::render('Dashboard', ['content' => 'success']);
-});
+Route::get('/success',  [CartItemController::class, 'emptyCart']);
 Route::get('/fail', function () {
     return Inertia::render('Dashboard', ['content' => 'fail']);
 });
@@ -71,20 +68,3 @@ Route::get(
         return Inertia::render('Dashboard', ['content' => 'video', 'video' => $videoName]);
     }
 );
-
-
-/*
-Route::get('/dashboard{any}', [UserController::class, 'goToDashboardPage'])->where('any', '.*');;
-Route::get('/', [UserController::class, 'checkSession']);
-
-
-
-
-
-Route::get(
-    '/error',
-    function () {
-        return view('/dashboard');
-    }
-);
-*/

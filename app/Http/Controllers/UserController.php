@@ -13,16 +13,6 @@ use function Psy\debug;
 class UserController extends Controller
 {
 
-    public function show()
-    {
-        $user = 'rey';
-
-        return Inertia::render('Test', [
-            'user' => $user
-        ]);
-    }
-
-
     public function loginPage()
     {
         return Inertia::render('Login');
@@ -118,10 +108,6 @@ class UserController extends Controller
             $request->session()->regenerate();
             Auth::user()->username;
         }
-
-        //   dd(Auth::user());
         return redirect('dashboard');
-        //  return Inertia::render('Dashboard');
-        // return redirect('/dashboard');*/
     }
 }

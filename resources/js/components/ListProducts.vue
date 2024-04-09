@@ -65,6 +65,7 @@
                                         (Price: P{{ product.price }})
                                         <AddToCart
                                             :productId="product.id"
+                                            :productname="product.name"
                                         ></AddToCart>
                                     </h5>
                                 </div>

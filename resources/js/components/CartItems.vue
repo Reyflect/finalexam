@@ -1,28 +1,45 @@
 <template>
-    <div>
-        <h2>Your Cart</h2>
-        <ul>
-            <li v-for="item in cartItems" :key="item.id">
-                {{ item.product.name }} (P{{ item.product.price }}) - Quantity:
-                <input
-                    min="1"
-                    type="number"
-                    v-model="item.quantity"
-                    @input="updateQuantity(item)"
-                />
-                <button
-                    class="btn-flat btn-danger"
-                    @click="removeItem(item.id)"
+    <div class="card">
+        <div class="card-header">
+            <h2>Your Cart</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+                <tr v-for="item in cartItems" :key="item.id">
+                    <td>{{ item.product.name }}</td>
+                    <td>
+                        <input
+                            min="1"
+                            type="number"
+                            v-model="item.quantity"
+                            @input="updateQuantity(item)"
+                        />
+                    </td>
+                    <td>
+                        <button
+                            class="btn-flat btn-danger"
+                            @click="removeItem(item.id)"
+                        >
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <p v-show="isCartEmpty">No items in cart yet</p>
+            <div style="margin-top: 1%">
+                <a
+                    class="btn btn-primary"
+                    href="/checkout"
+                    v-show="!isCartEmpty"
+                    >Checkout</a
                 >
-                    Remove
-                </button>
-            </li>
-        </ul>
-
-        <a class="btn btn-primary" href="/checkout" v-show="!isPropEmpty"
-            >Checkout</a
-        >
-        <p v-show="isPropEmpty">No items in cart yet</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -38,7 +55,7 @@ export default {
         },
     },
     computed: {
-        isPropEmpty() {
+        isCartEmpty() {
             // Check if the prop is empty
             return this.cartItems.length === 0;
         },

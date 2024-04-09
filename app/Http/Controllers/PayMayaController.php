@@ -14,17 +14,8 @@ class PayMayaController extends Controller
 
     public function extractJsonToArray(Request $request)
     {
-        // Get the array of JSON strings from the request
-
         $jsonArray = $request->input('cartItems');
-        // $stringifiedJson = json_decode($jsonArray, true);
-        //    dd($stringifiedJson);
         $objectData = json_decode($jsonArray);
-
-        //dd($objectData);
-        //      
-
-
 
         // Initialize an empty array to hold the formatted arrays
         $formattedArrays = [];

@@ -16,7 +16,8 @@ class ProductController extends Controller
             'category' => 'required|string',
             'description' => 'required|string',
             'datetime' => 'required|date',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'price' => 'required'
         ];
 
         // Perform validation
@@ -32,7 +33,7 @@ class ProductController extends Controller
         $product->category = $request->input('category');
         $product->description = $request->input('description');
         $product->datetime = $request->input('datetime');
-        $product->price = 100;
+        $product->price =  $request->input('price');
         $product->save();
 
 
@@ -125,6 +126,7 @@ class ProductController extends Controller
             'category' => 'required|string',
             'description' => 'required|string',
             'datetime' => 'required|date',
+            'price' => 'required',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
         ];
 
@@ -143,6 +145,7 @@ class ProductController extends Controller
         // Update the product details
         $product->name = $request->input('name');
         $product->category = $request->input('category');
+        $product->price = $request->input('price');
         $product->description = $request->input('description');
         $product->datetime = $request->input('datetime');
 
