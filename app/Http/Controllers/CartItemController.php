@@ -56,7 +56,7 @@ class CartItemController extends Controller
         $cartItem->quantity = $request->quantity; // Use the provided quantity
         $cartItem->save();
 
-        return response()->json(['cartItem' => $cartItem]);
+        return response()->json(['cartItem' => $this->getCartItemsJSON()]);
     }
 
     public function updateCartItem(Request $request, $id)
@@ -66,18 +66,28 @@ class CartItemController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        // Find the cart item by ID
-        $cartItem = CartItem::findOrFail($id)->where('user_id', auth()->id());
-        $cartItem->quantity = $request->quantity;
-        $cartItem->save();
+        try {
+            // Find the cart item by ID for the authenticated user
+            $cartItem = CartItem::where('id', $id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
 
-        return response()->json(['cartItem' => $cartItem]);
+            // Update the quantity and save
+            $cartItem->quantity = $request->quantity;
+            $cartItem->save();
+
+            return response()->json(['cartItem' => $cartItem]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error updating cart item'], 500);
+        }
     }
 
     public function removeCartItem($id)
     {
         // Find the cart item by ID and delete it
-        $cartItem = CartItem::findOrFail($id)->where('user_id', auth()->id());
+        $cartItem =  CartItem::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
         $cartItem->delete();
 
         $cartItems = CartItem::with('product')->get(); // Eager load product details

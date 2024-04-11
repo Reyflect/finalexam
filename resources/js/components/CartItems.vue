@@ -5,30 +5,34 @@
         </div>
         <div class="card-body">
             <table class="table table-bordered">
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Action</th>
-                </tr>
-                <tr v-for="item in cartItems" :key="item.id">
-                    <td>{{ item.product.name }}</td>
-                    <td>
-                        <input
-                            min="1"
-                            type="number"
-                            v-model="item.quantity"
-                            @input="updateQuantity(item)"
-                        />
-                    </td>
-                    <td>
-                        <button
-                            class="btn-flat btn-danger"
-                            @click="removeItem(item.id)"
-                        >
-                            Remove
-                        </button>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in cartItems" :key="item.id">
+                        <td>{{ item.product.name }}</td>
+                        <td>
+                            <input
+                                min="1"
+                                type="number"
+                                v-model="item.quantity"
+                                @input="updateQuantity(item)"
+                            />
+                        </td>
+                        <td>
+                            <button
+                                class="btn-flat btn-danger"
+                                @click="removeItem(item.id)"
+                            >
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
             <p v-show="isCartEmpty">No items in cart yet</p>
             <div style="margin-top: 1%">
@@ -36,8 +40,9 @@
                     class="btn btn-primary"
                     href="/checkout"
                     v-show="!isCartEmpty"
-                    >Checkout</a
                 >
+                    Checkout
+                </a>
             </div>
         </div>
     </div>
@@ -56,29 +61,29 @@ export default {
     },
     computed: {
         isCartEmpty() {
-            // Check if the prop is empty
             return this.cartItems.length === 0;
         },
     },
     setup(props) {
-        const cartItems = ref(props.cartItems); // Create a reactive ref
-
+        const cartItems = ref(props.cartItems);
         const updateQuantity = async (item) => {
-            try {
-                const response = await axios.put(
-                    `/api/cart/update/${item.id}`,
-                    { quantity: item.quantity }
-                );
-                // Update the quantity in the local cartItems array based on server response
-                const updatedItem = response.data.cartItem;
-                const index = cartItems.value.findIndex(
-                    (id) => i.id === updatedItem.id
-                );
-                if (index !== -1) {
-                    cartItems.value.splice(index, 1, updatedItem); // Replace old item with updated item
+            if (item.quantity !== "") {
+                if (item.quantity < 1) {
+                    // Set quantity to 1 if it becomes negative
+                    item.quantity = 1;
                 }
-            } catch (error) {
-                console.error(error);
+                try {
+                    const response = await axios.put(
+                        `/api/cart/update/${item.id}`,
+                        { quantity: item.quantity }
+                    );
+                    const updatedItem = response.data.cartItem;
+                    const index = cartItems.value.findIndex(
+                        (i) => i.id === updatedItem.id
+                    );
+                } catch (error) {
+                    console.error(error);
+                }
             }
         };
 
