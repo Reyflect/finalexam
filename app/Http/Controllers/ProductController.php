@@ -2,82 +2,129 @@
 
 namespace App\Http\Controllers;
 
+
+use Inertia\Inertia;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Inertia\Inertia;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
-    public function addNewProduct(Request $request)
+
+    /**
+     * Validates all inputs from the form
+     * @param Request $request of the instance
+     */
+    public function validationRules(Request $request)
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'category' => 'required|string',
+            'price' => 'required|int|min:1',
+            'stock' => 'required|int|min:1',
+            'category' => 'required|int',
             'description' => 'required|string',
             'datetime' => 'required|date',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'price' => 'required'
         ];
 
-        // Perform validation
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => "/error"], 400);
+            throw new ValidationException($validator);
         }
+        return $rules;
+    }
 
-        // Create a new product and save it to the database
-        $product = new Product();
-        $product->name = $request->input('name');
-        $product->category = $request->input('category');
-        $product->description = $request->input('description');
-        $product->datetime = $request->input('datetime');
-        $product->price =  $request->input('price');
-        $product->save();
+    /**
+     * Saves product details in database
+     * @param Request $request form request
+     * @param $id id of the product if editing
+     */
+    public function saveProduct(Request $request, $id = null)
+    {
+        try {
+            $this->validationRules($request);
+
+            $product = $id ? Product::findOrFail($id) : new Product();
+            $product->name = $request->input('name');
+            $product->category_id = $request->input('category');
+            $product->description = $request->input('description');
+            $product->datetime = $request->input('datetime');
+            $product->price = $request->input('price');
+            $product->stock = $request->input('stock');
 
 
-        // Handle image upload
-        if ($request->hasFile('images')) {
-            $imagePaths = [];
-
-            foreach ($request->file('images') as $image) {
-                // Generate a unique filename
-                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-
-
-                $image->storeAs('public/images', $filename);
-
-                // Save the image path to the array
-                $imagePaths[] = 'images/' . $filename;
+            if ($request->hasFile('images')) {
+                $this->handleImages($product, $request->file('images'));
             }
 
-            // Save the array of image paths to the product
-            $product->update(['images' => json_encode($imagePaths)]);
+            $product->save();
+            $totalRecords = Product::count();
+
+            // Calculate the page number for the last record
+            $pageNumber = ceil($totalRecords / 5);
+            return response()->json(['redirect_url' => "/dashboard?page={$pageNumber}"], 200);
+        } catch (ValidationException $e) {
+            return response()->json(['form_error' => $e->validator->errors()], 400);
+        }
+    }
+
+    /**
+     * Adds a new product
+     * @param Request $request of the instance
+     */
+    public function addNewProduct(Request $request)
+    {
+        return $this->saveProduct($request);
+    }
+
+    /**
+     * Handles all product images 
+     * @param $product is a product instance to check if there is already an existing record
+     * @param $newImages is the new image that will be added to the database
+     */
+    private function handleImages($product, $newImages)
+    {
+        $existingImages = json_decode($product->images, true) ?? [];
+
+        foreach ($existingImages as $imageName) {
+            $imagePath = public_path("storage/{$imageName}");
+            if (file_exists($imagePath) && $imageName !== 'images/default.png') {
+                unlink($imagePath);
+            }
         }
 
-        $totalRecords = Product::count();
+        $newImagePaths = [];
+        foreach ($newImages as $newImage) {
+            $filename = uniqid() . '.' . $newImage->getClientOriginalExtension();
+            $newImagePath = $newImage->storeAs('public/images', $filename);
+            $newImagePaths[] = 'images/' . basename($newImagePath);
+        }
 
-        // Calculate the page number for the last record
-        $pageNumber = ceil($totalRecords / 5);
-        return response()->json(['redirect_url' => "/dashboard?page={$pageNumber}"], 200);
+        $product->images = json_encode($newImagePaths);
     }
+
+
+    /**
+     * Returns all producuts
+     */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with('category')->get();
         return $products;
-
-        /* dd(Inertia::render('ListProducts', [
-            'product' => $products
-        ]));*/
-        // ;
     }
+
+    /**
+     * Searches for a product
+     * @param Request $request of the instance
+     */
     public function search(Request $request)
     {
         $searchTerm = $request->input('search');
         $category = $request->input('category');
 
-        $query = Product::query();
+        $query = Product::with('category');
 
         if ($searchTerm) {
             $query->where(function ($q) use ($searchTerm) {
@@ -87,100 +134,47 @@ class ProductController extends Controller
         }
 
         if ($category) {
-            $query->where('category', $category);
+            $query->where('category_id', $category);
         }
 
         $filteredProducts = $query->get();
         return response()->json($filteredProducts);
     }
 
-    public function getDistinctCategories()
-    {
-        $categories = array('Foods', 'Clothes', 'Toys');
-
-        return response()->json($categories);
-    }
-
+    /**
+     * Retruns the product details based on id
+     * @param Product $product is the product id
+     */
     public function getProductById(Product $product)
     {
-        if (!$product) {
-            abort(404);
-        }
         return response()->json(['product' => $product], 200);
     }
 
+
+    /**
+     * Returns the view of the product page
+     * @param Product $product is the id instance
+     */
     public function showEditProduct(Product $product)
     {
-        if (!$product) {
-            abort(404);
-        }
         return Inertia::render('Dashboard', ['content' => 'editProduct', 'product' => $product]);
-        //        return view('dashboard', ['content' => 'editProduct', 'product' => $product]);
     }
 
+    /**
+     * Updates product details
+     * @param Request $request is the request details
+     * @param $id is the product id
+     */
     public function updateProduct(Request $request, $id)
     {
-
-        $rules = [
-            'name' => 'required|string|max:255',
-            'category' => 'required|string',
-            'description' => 'required|string',
-            'datetime' => 'required|date',
-            'price' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
-        ];
-
-        // Perform validation
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-        $product = Product::find($id);
-
-        if (!$product) {
-            abort(404);
-        }
-
-        // Update the product details
-        $product->name = $request->input('name');
-        $product->category = $request->input('category');
-        $product->price = $request->input('price');
-        $product->description = $request->input('description');
-        $product->datetime = $request->input('datetime');
-
-        // Handle image updates
-        $existingImages = json_decode($product->images, true) ?? [];
-
-        // Add new images
-        $newImages = $request->file('images');
-        if ($newImages) {
-            foreach ($existingImages as $imageName) {
-
-                $imagePath = public_path("storage/{$imageName}");
-
-                if (file_exists($imagePath) && $imageName !== 'images/default.png') {
-                    unlink($imagePath);
-                }
-            }
-
-            $newImagePaths = [];
-            foreach ($newImages as $newImage) {
-                $newImagePath = $newImage->store('images', 'public');
-                $newImagePaths[] = $newImagePath;
-            }
-            $existingImages = $newImagePaths;
-        }
-
-        // Save the updated images
-        $product->images = json_encode($existingImages);
-
-        // Save the changes
-        $product->save();
-        $pageNumber = $this->getIndex($id);
-        return response()->json(['redirect_url' => "/dashboard?page={$pageNumber}"], 200);
+        return $this->saveProduct($request, $id);
     }
 
+
+    /**
+     * Returns a new page number
+     * @param $id 
+     */
     public function getIndex($id)
     {
         // Calculate the page number based on the index of the row
@@ -188,15 +182,20 @@ class ProductController extends Controller
         $pageNumber = ceil(($index + 1) / 5);
         return $pageNumber;
     }
+
+    /**
+     * deletes a product
+     * @param Product $product of the instance
+     */
     public function deleteProduct(Product $product)
     {
-        // Gets the images in the database
-        $imagesJson = $product->images;
-
-        // Gets all the images in an array 
+        $this->deleteImages($product->images);
+        $product->delete();
+    }
+    private function deleteImages($imagesJson)
+    {
         $imagesArray = json_decode($imagesJson, true);
 
-        // Deletes all images if it exists
         if (!is_null($imagesArray)) {
             foreach ($imagesArray as $imageName) {
                 $imagePath = public_path("storage/{$imageName}");
@@ -206,8 +205,5 @@ class ProductController extends Controller
                 }
             }
         }
-
-
-        $product->delete();
     }
 }

@@ -17,7 +17,7 @@
                             class="form-control"
                             maxlength="255"
                         />
-                        <span v-show="!validateName()" class="text-danger"
+                        <span v-show="validateName()" class="text-danger"
                             >Please enter a valid name.</span
                         >
                     </div>
@@ -33,12 +33,28 @@
                             min="1"
                             required
                         />
-                        <span v-show="!validatePrice()" class="text-danger"
+                        <span v-show="validatePrice()" class="text-danger"
                             >Please set a price.</span
                         >
                     </div>
+
                     <div class="form-group">
-                        <label for="category">Category:</label>
+                        <label for="price">Stock:</label>
+                        <input
+                            v-model="formData.stock"
+                            type="number"
+                            name="stock"
+                            placeholder="stock"
+                            class="form-control"
+                            min="1"
+                            required
+                        />
+                        <span v-show="validateStock()" class="text-danger"
+                            >Please set a stock.</span
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category: </label>
                         <select
                             v-model="formData.category"
                             name="category"
@@ -49,12 +65,12 @@
                             <option
                                 v-for="category in categoryOptions"
                                 :key="category"
-                                :value="category"
+                                :value="category.id"
                             >
-                                {{ category }}
+                                {{ category.name }}
                             </option>
                         </select>
-                        <span v-show="!validateCategory()" class="text-danger"
+                        <span v-show="validateCategory()" class="text-danger"
                             >Please select a category.</span
                         >
                     </div>
@@ -66,9 +82,7 @@
                             placeholder="Description"
                             class="form-control"
                         ></textarea>
-                        <span
-                            v-show="!validateDescription()"
-                            class="text-danger"
+                        <span v-show="validateDescription()" class="text-danger"
                             >Please enter a description.</span
                         >
                     </div>
@@ -168,6 +182,8 @@ export default {
             default: () => ({
                 name: "",
                 category: "",
+                price: "",
+                stock: "",
                 description: "",
                 images: [],
                 datetime: "",
@@ -186,12 +202,18 @@ export default {
                 name: this.product.name,
                 category: this.product.category,
                 description: this.product.description,
+                stock: this.product.stock,
                 images: [],
                 datetime: this.product.datetime,
                 price: this.product.price,
             },
             categoryOptions: [],
             validImage: false,
+            field_name: false,
+            field_price: false,
+            field_desc: false,
+            field_category: false,
+            field_stock: false,
         };
     },
     watch: {
@@ -199,11 +221,12 @@ export default {
             handler(newVal) {
                 this.formData = {
                     name: newVal.name,
-                    category: newVal.category,
+                    category: newVal.category_id,
                     description: newVal.description,
                     images: [],
                     datetime: newVal.datetime,
                     price: newVal.price,
+                    stock: newVal.stock,
                 };
             },
             deep: true,
@@ -214,22 +237,7 @@ export default {
     },
     methods: {
         nextStep() {
-            if (this.step === 1) {
-                if (
-                    this.validateName() &&
-                    this.validatePrice() &&
-                    this.validateCategory() &&
-                    this.validateDescription()
-                ) {
-                    this.step++;
-                }
-            } else if (this.step === 2) {
-                if (this.validateImages()) {
-                    this.step++;
-                }
-            } else if (this.step < this.totalSteps) {
-                this.step++;
-            }
+            this.step++;
         },
         prevStep() {
             if (this.step > 1) {
@@ -237,16 +245,19 @@ export default {
             }
         },
         validateName() {
-            return this.formData.name.trim() !== "";
+            return this.field_name;
         },
         validatePrice() {
-            return this.formData.price > 0;
+            return this.field_price;
         },
         validateCategory() {
-            return this.formData.category !== "";
+            return this.field_category;
         },
         validateDescription() {
-            return this.formData.description.trim() !== "";
+            return this.field_desc;
+        },
+        validateStock() {
+            return this.field_stock;
         },
         validateImages() {
             if (this.isEditing && this.validImage) {
@@ -268,15 +279,16 @@ export default {
             });
 
             if (validFiles.length === selectedFiles.length) {
-                console.error("VALID");
+                // console.error("VALID");
                 this.formData.images = event.target.files;
                 this.validImage = true;
             } else {
-                console.error("Please select only JPG or PNG images.");
+                //    console.error("Please select only JPG or PNG images.");
                 this.validImage = false;
             }
         },
         validateForm() {
+            /*
             switch (this.step) {
                 case 1:
                     return (
@@ -290,7 +302,8 @@ export default {
                     return this.validateDatetime();
                 default:
                     return false;
-            }
+            }*/
+            return true;
         },
         fetchCategories() {
             axios
@@ -303,35 +316,52 @@ export default {
                 });
         },
         submitForm() {
-            if (this.validateForm()) {
-                const formData = new FormData();
-                formData.append("name", this.formData.name);
-                formData.append("category", this.formData.category);
-                formData.append("description", this.formData.description);
-                formData.append("datetime", this.formData.datetime);
-                formData.append("price", this.formData.price);
-                for (const image of this.formData.images) {
-                    formData.append("images[]", image);
-                }
+            const formData = new FormData();
+            formData.append("name", this.formData.name);
+            formData.append("category", this.formData.category);
+            formData.append("description", this.formData.description);
+            formData.append("datetime", this.formData.datetime);
+            formData.append("price", this.formData.price);
+            formData.append("stock", this.formData.stock);
+            for (const image of this.formData.images) {
+                formData.append("images[]", image);
+            }
 
-                const endpoint = this.isEditing
-                    ? `/api/updateproduct/${this.product.id}`
-                    : "/api/addnewproduct";
+            const endpoint = this.isEditing
+                ? `/api/updateproduct/${this.product.id}`
+                : "/api/addnewproduct";
 
-                axios
-                    .post(endpoint, formData)
-                    .then((response) => {
-                        const createdProduct = response.data;
-                        this.$emit("create-submit", createdProduct);
+            axios
+                .post(endpoint, formData)
+                .then((response) => {
+                    const createdProduct = response.data;
+                    this.$emit("create-submit", createdProduct);
+                    // console.log(response.data.redirect_url);
+                    window.location = response.data.redirect_url;
+                })
+                .catch((error) => {
+                    console.error("Error submitting form:", error);
+                    alert("Please Check The form");
+                    this.handleErrors(JSON.parse(error.request.response));
+                });
+        },
+        handleErrors(validation_error) {
+            // console.log(validation_error.form_error);
 
-                        if (response.data.redirect_url) {
-                            window.location.href = response.data.redirect_url;
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error submitting form:", error);
-                        //     window.location.href = "/error";
-                    });
+            if (validation_error.form_error.name != null) {
+                this.field_name = true;
+            }
+            if (validation_error.form_error.description != null) {
+                this.field_desc = true;
+            }
+            if (validation_error.form_error.category != null) {
+                this.field_category = true;
+            }
+            if (validation_error.form_error.price != null) {
+                this.field_price = true;
+            }
+            if (validation_error.form_error.stock != null) {
+                this.field_stock = true;
             }
         },
     },

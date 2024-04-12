@@ -29,9 +29,9 @@
                                     <option
                                         v-for="category in categories"
                                         :key="category"
-                                        :value="category"
+                                        :value="category.id"
                                     >
-                                        {{ category }}
+                                        {{ category.name }}
                                     </option>
                                 </select>
                                 <button type="submit" class="btn btn-primary">
@@ -62,10 +62,12 @@
                                         #{{ product.id }}
                                         Product Name:
                                         {{ product.name }}
-                                        (Price: P{{ product.price }})
+                                        (Price: P{{ product.price }}) Stock:
+                                        {{ product.stock }} left
                                         <AddToCart
                                             :productId="product.id"
                                             :productname="product.name"
+                                            :stock="product.stock"
                                         ></AddToCart>
                                     </h5>
                                 </div>
@@ -88,7 +90,7 @@
                                     </div>
 
                                     <h6 class="card-title">
-                                        Category: {{ product.category }}
+                                        Category: {{ product.category.name }}
                                     </h6>
                                     <p class="card-text">
                                         Description:

@@ -3,26 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Illuminate\Contracts\Session\Session;
 
-use function Psy\debug;
+
 
 class UserController extends Controller
 {
 
+    /**
+     * renders login page
+     */
     public function loginPage()
     {
         return Inertia::render('Login');
     }
 
+    /**
+     * renders dashboard page
+     */
     public function dashboardPage()
     {
         return Inertia::render('Dashboard');
     }
 
+    /**
+     * creates a new user
+     * @param Request $request of current instance 
+     */
     public function register(Request $request)
     {
 
@@ -44,6 +55,9 @@ class UserController extends Controller
         return redirect('/');
     }
 
+    /**
+     * logouts the user
+     */
     public function logout()
     {
 
@@ -52,22 +66,9 @@ class UserController extends Controller
         return redirect('/login');
     }
 
-    public function goToLoginPage()
-    {
-        if (Auth::check() || Auth::viaRemember()) {
-            return Inertia::render('Dashboard', ['content' => 'product']);
-        }
-        return Inertia::render('Login');
-    }
-    public function goToDashboardPage()
-    {
-        if (!Auth::check()) {
-            return Inertia::render('Login');
-        }
-        return Inertia::render('Dashboard', ['content' => 'product']);
-    }
-
-
+    /**
+     * Checks the user's seesion
+     */
     public function checkSession()
     {
 
@@ -78,36 +79,41 @@ class UserController extends Controller
             return Inertia::render('Login');
         }
     }
+
     public function login(Request $request)
     {
-
-
-        // Checks if login credentials are entered
+        // Validate login credentials
         $incomingFields = $request->validate([
             'login_name' => ['required'],
             'login_password' => ['required'],
-
         ]);
 
-        // Check if there is a remember me checked
+        // Check if "remember me" is checked
         $rememberMe = $request->has('remember');
 
-        // Username and password user authentication
-        if (Auth::attempt([
-            'username' => $incomingFields['login_name'],
-            'password' => $incomingFields['login_password']
-        ], $rememberMe)) {
-            $request->session()->regenerate();
-            Auth::user()->username;
+        // Attempt to authenticate with username or email
+        if (
+            Auth::attempt(['username' => $incomingFields['login_name'], 'password' => $incomingFields['login_password']], $rememberMe)
+            || Auth::attempt(['email' => $incomingFields['login_name'], 'password' => $incomingFields['login_password']], $rememberMe)
+        ) {
+            // Authentication successful, authorize user
+
+            $this->authorizeUser($request);
         }
-        // Email and password user authentication
-        else if (Auth::attempt([
-            'email' => $incomingFields['login_name'],
-            'password' => $incomingFields['login_password']
-        ], $rememberMe)) {
-            $request->session()->regenerate();
-            Auth::user()->username;
-        }
+
+        // Authentication failed, redirect back with error
+        return back()->withErrors(['login_name' => 'Invalid credentials']);
+    }
+
+    public function authorizeUser($request)
+    {
+        $request->session()->regenerate();
+
         return redirect('dashboard');
+    }
+
+    public static function viewUserId()
+    {
+        return auth()->id();
     }
 }

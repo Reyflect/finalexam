@@ -15,7 +15,7 @@ class ProductTableSeeder extends Seeder
     public function run(): void
     {
         $product_name = array('', 'Apple', 'Banana', 'Orange', 'Red Tshirt', 'Blue Tshirt', 'Maong Pants', 'Jogging Pants', 'Barbie Doll', 'Pokemon Plushie');
-        $categories = array('Foods', 'Clothes', 'Toys');
+        $categories = array(1, 2, 3);
         $decsriptions = array("Lorem ipsum dolor sit amet", "consectetur adipiscing elit", "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua");
         $price = array(120, 80, 100);
 
@@ -30,7 +30,7 @@ class ProductTableSeeder extends Seeder
             $z = random_int(0, 2);
             Product::create([
                 'name' =>  $product_name[$x],
-                'category' => $categories[$categoryIndex],
+                'category_id' => $categories[$categoryIndex],
                 'description' => $decsriptions[$z],
                 'datetime' =>  $currentDate,
                 'price' =>  $price[$z],

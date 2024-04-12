@@ -48,7 +48,6 @@ export default {
                             />
 
                             <input
-                                v-model="credentials.username"
                                 type="text"
                                 name="login_name"
                                 class="form-control"

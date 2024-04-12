@@ -12,6 +12,10 @@ class PayMayaController extends Controller
 
     public $total = 0;
 
+    /**
+     * Formats the checkoutcart to a json
+     * @param Request $request of the instance
+     */
     public function extractJsonToArray(Request $request)
     {
         $jsonArray = $request->input('cartItems');
@@ -38,10 +42,12 @@ class PayMayaController extends Controller
     }
 
 
+    /**
+     * process the checkout
+     * @param Request $request
+     */
     public function postRequest(Request $request)
     {
-
-
         $curl = curl_init();
         $certificateFilePath = public_path('cacert.pem');
 

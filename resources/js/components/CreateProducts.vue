@@ -1,6 +1,6 @@
 <template>
     <div>
-        <product-form :formData="formData" @create-submit="submitCreateForm" />
+        <product-form />
     </div>
 </template>
 

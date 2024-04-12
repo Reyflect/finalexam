@@ -8,6 +8,7 @@
                 <thead>
                     <tr>
                         <th>Product</th>
+                        <th>Stock Left</th>
                         <th>Quantity</th>
                         <th>Action</th>
                     </tr>
@@ -15,13 +16,16 @@
                 <tbody>
                     <tr v-for="item in cartItems" :key="item.id">
                         <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.stock }}</td>
                         <td>
                             <input
                                 min="1"
                                 type="number"
                                 v-model="item.quantity"
-                                @input="updateQuantity(item)"
                             />
+                            <button @click="updateQuantity(item)">
+                                Update
+                            </button>
                         </td>
                         <td>
                             <button
@@ -73,16 +77,24 @@ export default {
                     item.quantity = 1;
                 }
                 try {
-                    const response = await axios.put(
-                        `/api/cart/update/${item.id}`,
-                        { quantity: item.quantity }
-                    );
-                    const updatedItem = response.data.cartItem;
-                    const index = cartItems.value.findIndex(
-                        (i) => i.id === updatedItem.id
-                    );
+                    const response = await axios
+                        .put(`/api/cart/update/${item.id}`, {
+                            quantity: item.quantity,
+                            product_id: item.product.id,
+                            item_stock: item.product.stock,
+                        })
+                        .then((response) => {
+                            const updatedItem = response.data.cartItem;
+                            const index = cartItems.value.findIndex(
+                                (i) => i.id === updatedItem.id
+                            );
+                            window.location.reload();
+                        });
                 } catch (error) {
-                    console.error(error);
+                    //  console.error(error);
+                    alert("not enough stock");
+                    item.quantity = item.quantity;
+                    window.location.reload();
                 }
             }
         };

@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id(); // Auto-incremental primary key
             $table->string('name');
-            $table->string('category');
+            $table->unsignedBigInteger('category_id');
+            $table->integer('stock')->default(1);
             $table->string('description');
             $table->double('price');
             $table->dateTime('datetime')->nullable();
             $table->json('images')->nullable();
             $table->timestamps(); // Created_at and updated_at columns
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

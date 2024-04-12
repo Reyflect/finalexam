@@ -19,7 +19,7 @@ import { ref } from "vue";
 import axios from "axios";
 
 export default {
-    props: ["productId", "productname"],
+    props: ["productId", "productname", "stock"],
     setup(props) {
         const quantity = ref(1); // Default quantity
         const addToCart = async () => {
@@ -27,8 +27,8 @@ export default {
                 const response = await axios.post("/api/cart/add", {
                     productId: props.productId,
                     quantity: quantity.value,
+                    stock: props.stock,
                 });
-                console.log(response.data);
                 window.alert(
                     "Added " +
                         quantity.value +
@@ -37,7 +37,8 @@ export default {
                         " to cart"
                 );
             } catch (error) {
-                console.error(error);
+                console.error(error.response);
+                alert("Please check the stock");
             }
         };
 
