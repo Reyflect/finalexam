@@ -156,15 +156,14 @@
         <button
             @click.prevent="nextStep"
             v-if="step < totalSteps"
-            :disabled="!validateForm()"
             class="btn btn-primary"
         >
             Next
         </button>
+
         <button
             @click.prevent="submitForm"
             v-if="step === totalSteps"
-            :disabled="!validateForm()"
             class="btn btn-success"
         >
             {{ isEditing ? "Update Product" : "Add Product" }}
@@ -174,6 +173,11 @@
 
 <script>
 import axios from "axios";
+// Create a new Axios instance with custom configuration
+const axiosInstance = axios.create({
+    baseURL: "/dashboard",
+    maxRedirects: 5, // Set the maximum number of redirects
+});
 
 export default {
     props: {
@@ -279,31 +283,11 @@ export default {
             });
 
             if (validFiles.length === selectedFiles.length) {
-                // console.error("VALID");
                 this.formData.images = event.target.files;
                 this.validImage = true;
             } else {
-                //    console.error("Please select only JPG or PNG images.");
                 this.validImage = false;
             }
-        },
-        validateForm() {
-            /*
-            switch (this.step) {
-                case 1:
-                    return (
-                        this.validateName() &&
-                        this.validateCategory() &&
-                        this.validateDescription()
-                    );
-                case 2:
-                    return this.validateImages();
-                case 3:
-                    return this.validateDatetime();
-                default:
-                    return false;
-            }*/
-            return true;
         },
         fetchCategories() {
             axios

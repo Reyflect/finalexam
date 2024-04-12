@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Product;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+
 
     /**
      * Validates all inputs from the form
@@ -64,6 +66,7 @@ class ProductController extends Controller
 
             // Calculate the page number for the last record
             $pageNumber = ceil($totalRecords / 5);
+
             return response()->json(['redirect_url' => "/dashboard?page={$pageNumber}"], 200);
         } catch (ValidationException $e) {
             return response()->json(['form_error' => $e->validator->errors()], 400);
@@ -192,6 +195,12 @@ class ProductController extends Controller
         $this->deleteImages($product->images);
         $product->delete();
     }
+
+    /**
+     * Deletes images in the database
+     * 
+     * @param $imagesJson is a json of all product images
+     */
     private function deleteImages($imagesJson)
     {
         $imagesArray = json_decode($imagesJson, true);

@@ -70,6 +70,18 @@ export default {
     },
     setup(props) {
         const cartItems = ref(props.cartItems);
+        // Function to get the user ID
+        const getUserId = async () => {
+            try {
+                const response = await axios.get("/getusers");
+
+                return response.data; // Assuming the API response contains the user_id field
+            } catch (error) {
+                console.error("Error getting user ID:", error);
+                return null;
+            }
+        };
+
         const updateQuantity = async (item) => {
             if (item.quantity !== "") {
                 if (item.quantity < 1) {
@@ -77,11 +89,19 @@ export default {
                     item.quantity = 1;
                 }
                 try {
+                    const userId = await getUserId(); // Get the user ID
+
+                    if (!userId) {
+                        alert("Failed to get user ID. Please try again.");
+                        return;
+                    }
+
                     const response = await axios
                         .put(`/api/cart/update/${item.id}`, {
                             quantity: item.quantity,
                             product_id: item.product.id,
                             item_stock: item.product.stock,
+                            user_id: userId,
                         })
                         .then((response) => {
                             const updatedItem = response.data.cartItem;
@@ -101,7 +121,18 @@ export default {
 
         const removeItem = async (itemId) => {
             try {
-                await axios.delete(`/api/cart/remove/${itemId}`);
+                const userId = await getUserId(); // Get the user ID
+
+                if (!userId) {
+                    alert("Failed to get user ID. Please try again.");
+                    return;
+                }
+
+                await axios.delete(`/api/cart/remove/${itemId}`, {
+                    params: {
+                        user_id: userId,
+                    },
+                });
                 cartItems.value = cartItems.value.filter(
                     (item) => item.id !== itemId
                 );

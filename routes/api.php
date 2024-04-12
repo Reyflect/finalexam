@@ -25,7 +25,7 @@ Route::post('maya', [PayMayaController::class, 'postRequest']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/search', [ProductController::class, 'search']);
 
-Route::post('cart/add', [CartItemController::class, 'add']);
+Route::post('cart/add', [CartItemController::class, 'addToCart']);
 Route::put('cart/update/{id}', [CartItemController::class, 'updateCartItem']);
 Route::delete('cart/remove/{id}', [CartItemController::class, 'removeCartItem']);
 

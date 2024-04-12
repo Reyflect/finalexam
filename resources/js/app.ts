@@ -9,6 +9,8 @@ import "videojs-playlist/dist/videojs-playlist";
 import { DefineComponent, createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 
+
+
 createInertiaApp({
   resolve: (name: string) => {
     const pages = import.meta.glob(['./components/**.vue'], { eager: true })

@@ -7,8 +7,6 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Session\Session;
-
 
 
 class UserController extends Controller
@@ -80,6 +78,10 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * logs in the user to the system
+     * @param Request $request
+     */
     public function login(Request $request)
     {
         // Validate login credentials
@@ -96,22 +98,20 @@ class UserController extends Controller
             Auth::attempt(['username' => $incomingFields['login_name'], 'password' => $incomingFields['login_password']], $rememberMe)
             || Auth::attempt(['email' => $incomingFields['login_name'], 'password' => $incomingFields['login_password']], $rememberMe)
         ) {
-            // Authentication successful, authorize user
 
-            $this->authorizeUser($request);
+
+            $request->session()->regenerate();
+
+            return redirect('dashboard');
         }
 
         // Authentication failed, redirect back with error
         return back()->withErrors(['login_name' => 'Invalid credentials']);
     }
 
-    public function authorizeUser($request)
-    {
-        $request->session()->regenerate();
-
-        return redirect('dashboard');
-    }
-
+    /**
+     * returns the logged in user id 
+     */
     public static function viewUserId()
     {
         return auth()->id();

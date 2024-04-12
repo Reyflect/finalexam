@@ -22,12 +22,34 @@ export default {
     props: ["productId", "productname", "stock"],
     setup(props) {
         const quantity = ref(1); // Default quantity
+
+        // Function to get the user ID
+        const getUserId = async () => {
+            try {
+                const response = await axios.get("/getusers");
+                console.log(response.data);
+                return response.data; // Assuming the API response contains the user_id field
+            } catch (error) {
+                console.error("Error getting user ID:", error);
+                return null;
+            }
+        };
+
+        // Function to add item to cart
         const addToCart = async () => {
+            const userId = await getUserId(); // Get the user ID
+
+            if (!userId) {
+                alert("Failed to get user ID. Please try again.");
+                return;
+            }
+
             try {
                 const response = await axios.post("/api/cart/add", {
                     productId: props.productId,
                     quantity: quantity.value,
                     stock: props.stock,
+                    user_id: userId,
                 });
                 window.alert(
                     "Added " +
@@ -37,8 +59,8 @@ export default {
                         " to cart"
                 );
             } catch (error) {
-                console.error(error.response);
-                alert("Please check the stock");
+                console.error("Error adding to cart:", error);
+                alert("Failed to add item to cart. Please try again.");
             }
         };
 
