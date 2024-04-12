@@ -20,14 +20,14 @@ import axios from "axios";
 
 export default {
     props: ["productId", "productname", "stock"],
-    setup(props) {
+    setup(props, { emit }) {
         const quantity = ref(1); // Default quantity
 
         // Function to get the user ID
         const getUserId = async () => {
             try {
                 const response = await axios.get("/getusers");
-                console.log(response.data);
+
                 return response.data; // Assuming the API response contains the user_id field
             } catch (error) {
                 console.error("Error getting user ID:", error);
@@ -58,6 +58,7 @@ export default {
                         props.productname +
                         " to cart"
                 );
+                emit("refresh-products");
             } catch (error) {
                 console.error("Error adding to cart:", error);
                 alert("Failed to add item to cart. Please try again.");

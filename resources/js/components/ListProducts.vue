@@ -68,6 +68,7 @@
                                             :productId="product.id"
                                             :productname="product.name"
                                             :stock="product.stock"
+                                            @refresh-products="refreshProducts"
                                         ></AddToCart>
                                     </h5>
                                 </div>
@@ -144,6 +145,7 @@ import axios from "axios";
 import Pagination from "./Pagination.vue";
 
 defineProps({ product: Object });
+
 const products = ref([]);
 const searchTerm = ref("");
 const currentPage = ref(1);
@@ -255,4 +257,8 @@ const goToPage = () => {
 watchEffect(() => {
     currentPage.value = parseQueryParameters();
 });
+
+const refreshProducts = () => {
+    fetchProducts();
+};
 </script>

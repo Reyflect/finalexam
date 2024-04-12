@@ -160,10 +160,10 @@
         >
             Next
         </button>
-
+        <!--  @click.prevent="submitForm"-->
         <button
-            @click.prevent="submitForm"
             v-if="step === totalSteps"
+            @click="submitForm"
             class="btn btn-success"
         >
             {{ isEditing ? "Update Product" : "Add Product" }}
@@ -173,11 +173,6 @@
 
 <script>
 import axios from "axios";
-// Create a new Axios instance with custom configuration
-const axiosInstance = axios.create({
-    baseURL: "/dashboard",
-    maxRedirects: 5, // Set the maximum number of redirects
-});
 
 export default {
     props: {

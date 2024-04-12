@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
 export default {
@@ -69,8 +69,24 @@ export default {
         },
     },
     setup(props) {
-        const cartItems = ref(props.cartItems);
-        // Function to get the user ID
+        //  const cartItems = ref(props.cartItems);
+        const cartItems = ref([]);
+
+        // Function to fetch cart items
+        const fetchCartItems = async () => {
+            try {
+                const response = await axios.get("/items"); // Modify the endpoint as needed
+                cartItems.value = response.data;
+                console.log(response);
+            } catch (error) {
+                console.error("Error fetching cart items:", error);
+            }
+        };
+
+        onMounted(() => {
+            fetchCartItems(); // Fetch cart items after component is mounted
+        });
+        //gets user id
         const getUserId = async () => {
             try {
                 const response = await axios.get("/getusers");
@@ -82,6 +98,7 @@ export default {
             }
         };
 
+        //update quantity of the field
         const updateQuantity = async (item) => {
             if (item.quantity !== "") {
                 if (item.quantity < 1) {
@@ -103,22 +120,17 @@ export default {
                             item_stock: item.product.stock,
                             user_id: userId,
                         })
-                        .then((response) => {
-                            const updatedItem = response.data.cartItem;
-                            const index = cartItems.value.findIndex(
-                                (i) => i.id === updatedItem.id
-                            );
-                            window.location.reload();
+                        .then(() => {
+                            fetchCartItems();
                         });
                 } catch (error) {
-                    //  console.error(error);
                     alert("not enough stock");
                     item.quantity = item.quantity;
-                    window.location.reload();
                 }
             }
         };
 
+        //removes an item in the cart
         const removeItem = async (itemId) => {
             try {
                 const userId = await getUserId(); // Get the user ID

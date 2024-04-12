@@ -31,8 +31,8 @@ Route::get('/getDistinctCategories', [CategoryController::class, 'categories']);
 
 Route::get('/Cart', [CartItemController::class, 'getCartItems']);
 Route::get('/checkout', [CartItemController::class, 'getCartItems'])->defaults('content', 'checkout');
-Route::get('/items', [CartItemController::class, 'getCartItemsJSON']);
-
+Route::get('/items', [CartItemController::class, 'cartContents']);
+Route::get('/itemsjson', [CartItemController::class, 'getCartItemsJSON']);
 
 
 

@@ -1,12 +1,21 @@
 <template>
     <div>
-        <edit-product-form :product="selectedProduct" :is-editing="true" />
+        <form
+            @submit.prevent="submitForm"
+            action="/api/updateproduct/${this.product.id}"
+            method="POST"
+        >
+            <edit-product-form
+                :product="selectedProduct"
+                :is-editing="true"
+                @update-submit="handleUpdateSubmit"
+            />
+        </form>
     </div>
 </template>
 
 <script>
 import EditProductForm from "./ProductForm.vue";
-
 import axios from "axios";
 
 export default {
@@ -27,6 +36,8 @@ export default {
                 description: "",
                 images: [],
                 datetime: "",
+                price: "", // Add price and stock fields if needed
+                stock: "",
             },
         };
     },
@@ -47,6 +58,13 @@ export default {
                 .catch((error) => {
                     console.error("Error fetching product details:", error);
                 });
+        },
+        submitForm() {
+            // This will be handled by the EditProductForm component
+        },
+        handleUpdateSubmit(updatedProduct) {
+            // Handle the updated product data if needed
+            console.log("Product updated:", updatedProduct);
         },
     },
 };
