@@ -59,9 +59,7 @@ export default {
                     console.error("Error fetching product details:", error);
                 });
         },
-        submitForm() {
-            // This will be handled by the EditProductForm component
-        },
+        submitForm() {},
         handleUpdateSubmit(updatedProduct) {
             // Handle the updated product data if needed
             console.log("Product updated:", updatedProduct);

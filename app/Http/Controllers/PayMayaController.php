@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Order;
 use GuzzleHttp\Client;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\CartItemController;
+
 
 class PayMayaController extends Controller
 {
 
-    public $total = 0;
 
     /**
      * Formats the checkoutcart to a json
@@ -33,8 +35,6 @@ class PayMayaController extends Controller
                 'name' => $jsonData->product->name,
                 'quantity' => $jsonData->quantity,
             ];
-
-            $this->total +=  ($jsonData->quantity * $jsonData->product->price);
         }
 
 
@@ -48,9 +48,32 @@ class PayMayaController extends Controller
      */
     public function postRequest(Request $request)
     {
+
+        return $this->paymaya($request);
+        //$v = $this->paymaya($request);
+
+        //  return Inertia::render('Dashboard', ['content' => 'checkout', 'cartItems' => $this->cartContents(), 'maya' => $v]);
+        //  return Inertia::render('Dashboard', [$v]);
+    }
+
+    public function generateReferenceNumber($length = 8)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $reference = '';
+        $maxIndex = strlen($characters) - 1;
+
+        for ($i = 0; $i < $length; $i++) {
+            $reference .= $characters[rand(0, $maxIndex)];
+        }
+
+        return $reference;
+    }
+    public function paymaya(Request $request)
+    {
+
         $curl = curl_init();
         $certificateFilePath = public_path('cacert.pem');
-
+        $reference_number = $this->generateReferenceNumber();
         curl_setopt_array($curl, [
             CURLOPT_URL => "https://pg-sandbox.paymaya.com/checkout/v1/checkouts",
             CURLOPT_RETURNTRANSFER => true,
@@ -65,13 +88,13 @@ class PayMayaController extends Controller
                     'currency' => 'PHP',
                     'value' => $request->input('total_price'),
                 ],
+                'items' => ($this->extractJsonToArray($request)),
+                'requestReferenceNumber' => $reference_number,
                 'redirectUrl' => [
-                    'success' => 'http://localhost:8000/success',
+                    'success' => 'http://localhost:8000/success?total=' . $request->input('total_price') . '&id=' . $reference_number,
                     'failure' => 'http://localhost:8000/fail',
                     'cancel' => 'http://localhost:8000/checkout'
                 ],
-                'items' => ($this->extractJsonToArray($request)),
-                'requestReferenceNumber' => '5fc10b93-bdbd-4f31-b31d-4575a3785009'
             ]),
             CURLOPT_HTTPHEADER => [
                 "accept: application/json",
@@ -81,6 +104,7 @@ class PayMayaController extends Controller
         ]);
 
         $response = curl_exec($curl);
+
         $err = curl_error($curl);
 
         curl_close($curl);
@@ -88,10 +112,30 @@ class PayMayaController extends Controller
         if ($err) {
             echo "cURL Error #:" . $err;
         } else {
-            echo $response;
+            //  echo $response;
+
             $json = json_decode($response, true);
             return redirect($json['redirectUrl']);
+            //return response()->json($json);
         }
     }
+
+
+    // /**
+    //  * Returns the JSON of the products
+    //  */
+    // public function getCartItemsJSON()
+    // {
+    //     $cartItems = $this->cartContents();
+
+    //     return response()->json(['cartItem' => $cartItems]);
+    // }
+
+    // /**
+    //  * Returns the collection of the products
+    //  */
+    // public function cartContents()
+    // {
+    //     return CartItem::with('product')->where('user_id', auth()->id())->get();
+    // }
 }
-//

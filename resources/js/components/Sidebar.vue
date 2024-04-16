@@ -43,6 +43,12 @@
                             <p>Create</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/category" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Categories</p>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <a href="/videos" class="nav-link">
@@ -55,6 +61,13 @@
                         <a href="/Cart" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Cart</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/orders" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Orders</p>
                         </a>
                     </li>
                 </ul>

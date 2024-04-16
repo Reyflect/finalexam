@@ -201,7 +201,7 @@ const paginatedProducts = computed(() => {
 onMounted(() => {
     fetchCategories();
     getProducts();
-    console.log(isSearching.value);
+
     currentPage.value = parseQueryParameters();
     goToPage(currentPage.value);
 });

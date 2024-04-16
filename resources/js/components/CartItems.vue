@@ -36,6 +36,12 @@
                             </button>
                         </td>
                     </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Total Amount: P{{ total }}</td>
+                    </tr>
                 </tbody>
             </table>
             <p v-show="isCartEmpty">No items in cart yet</p>
@@ -67,6 +73,11 @@ export default {
         isCartEmpty() {
             return this.cartItems.length === 0;
         },
+        total() {
+            return this.cartItems.reduce((total, item) => {
+                return total + item.product.price * item.quantity;
+            }, 0);
+        },
     },
     setup(props) {
         //  const cartItems = ref(props.cartItems);
@@ -86,6 +97,7 @@ export default {
         onMounted(() => {
             fetchCartItems(); // Fetch cart items after component is mounted
         });
+
         //gets user id
         const getUserId = async () => {
             try {

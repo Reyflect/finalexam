@@ -14,6 +14,10 @@ import SuccessVue from "./Success.vue";
 import FailVue from "./Fail.vue";
 import VideoList from "./VideoList.vue";
 import SideBar from "./Sidebar.vue";
+import Orders from "./Orders.vue";
+import Category from "./Category.vue";
+
+import CategoryAddUpdate from "./CategoryAddUpdate.vue";
 export default {
     components: {
         ProductList,
@@ -25,6 +29,9 @@ export default {
         FailVue,
         VideoList,
         SideBar,
+        Orders,
+        Category,
+        CategoryAddUpdate,
     },
 };
 </script>
@@ -78,6 +85,22 @@ export default {
                             </ol>
                         </div>
                     </div>
+                    <div class="row mb-2" v-if="content == 'addcategory'">
+                        <div class="col-sm-12">
+                            <CategoryAddUpdate
+                                :isEditing="false"
+                            ></CategoryAddUpdate>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2" v-if="content == 'editcategory'">
+                        <div class="col-sm-12">
+                            <CategoryAddUpdate
+                                :isEditing="true"
+                                :category="$attrs.category"
+                            ></CategoryAddUpdate>
+                        </div>
+                    </div>
 
                     <div class="row mb-2" v-if="content == 'addproduct'">
                         <div class="col-sm-12">
@@ -89,6 +112,11 @@ export default {
                             <EditProducts
                                 :product-id="$attrs.product.id"
                             ></EditProducts>
+                        </div>
+                    </div>
+                    <div class="row mb-2" v-if="content == 'category'">
+                        <div class="col-sm-12">
+                            <category></category>
                         </div>
                     </div>
                     <div class="row mb-2" v-if="content == 'cart'">
@@ -118,6 +146,11 @@ export default {
                             <VideoList
                                 :initial-video="$attrs.video"
                             ></VideoList>
+                        </div>
+                    </div>
+                    <div class="row mb-2" v-if="content == 'order'">
+                        <div class="col-sm-12">
+                            <orders></orders>
                         </div>
                     </div>
                 </div>

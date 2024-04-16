@@ -25,7 +25,7 @@
                 </tr>
             </table>
 
-            <form ref="paymentForm" action="/api/maya" method="POST">
+            <form ref="paymentForm" method="POST" action="api/maya">
                 <input
                     type="hidden"
                     name="cartItems"
@@ -45,13 +45,15 @@
                 </div>
             </form>
 
-            <p v-show="isCartEmpty">No items in cart!</p>
+            <!--p v-show="isCartEmpty">No items in cart!</p-->
         </div>
     </div>
 </template>
 
 <script type="ts">
-import { ref } from "vue";
+import { ref ,onMounted } from "vue";
+import axios from "axios";
+
 export default {
     props: {
         cartItems: {
@@ -74,15 +76,55 @@ export default {
         },
 
     },
+
+
     setup(props) {
         const cartItems = ref(props.cartItems); // Create a reactive ref
+      /*  var responseData = ref([]);
+        // Function to fetch cart items
+            const fetchTotal = async () => {
+                try {
+                    const response = await axios.get("/totalItems"); // Modify the endpoint as needed
 
-        const processPayment = () => {
-            // Submit the payment form
-            const paymentForm = document.getElementById("paymentForm");
-            paymentForm.submit();
+
+                    return parseInt(response.data);
+
+                } catch (error) {
+                    console.error("Error fetching cart items:", error);
+                }
+            };
+
+          // Function to fetch cart items
+        const fetchCheckoutDetails = async () => {
+            try {
+                const formData = new FormData();
+                const totalItems = await fetchTotal();
+                formData.append("cartItems", JSON.stringify(cartItems.value));
+                formData.append("total_price",totalItems);
+
+                const response = await axios.post(`/api/maya`, formData);
+
+                // Assuming the response contains JSON data, you can access it like this:
+                return response.data;
+                // You can do further processing or update your component state with the fetched data here
+            } catch (error) {
+                console.error("Error fetching cart items:", error);
+            }
         };
-        return { cartItems, processPayment };
+
+        // Use the onMounted hook to trigger fetching cart items after the component is mounted
+        onMounted(async () => {
+            responseData.value = await fetchCheckoutDetails();
+        });
+        const processPayment = () => {
+            const formData = new FormData();
+            formData.append("checkOutId", JSON.stringify(responseData.value.checkoutId));
+            window.location.href = responseData.value.redirectUrl;
+
+
+        };*/
+
+        return { cartItems };
     },
 };
 </script>
